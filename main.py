@@ -37,9 +37,10 @@ def main():
         row_number = index + 2
         voornaam = str(rij.get("voornaam", "")).strip()
         achternaam = str(rij.get("achternaam", "")).strip()
-        leeftijdscategorie = str(rij.get("leeftijdscategorie", "")).strip().upper()
+        email = str(rij.get("email", "")).strip()
+        leeftijdscategorie = str(rij.get("leeftijdscategorie", "")).strip().upper()  # Direct naar uppercase voor consistentie met counts
         geboortedatum = str(rij.get("geboortedatum", "")).strip()
-        
+
         # --- Wachtlijst Logica ---
         wachtlijst_waarde = str(rij.get("wachtlijst", "")).strip().lower()
         is_wachtlijst = wachtlijst_waarde == "ja"
@@ -54,6 +55,7 @@ def main():
             wachtlijst_rij = [
                 voornaam,
                 achternaam,
+                email,
                 leeftijdscategorie,
                 geboortedatum,
                 wachtlijst_plek
@@ -61,19 +63,22 @@ def main():
             updater.append_to_wachtlijst(wachtlijst_rij)
             huidige_wachtlijst_personen.append(sleutel)
             
+            # Update de huidige rij dictionary met de zojuist berekende plek voor de mailer
+            rij["wachtlijst_plaats"] = wachtlijst_plek
+            
             if wachtlijst_col:
                 updater.update_cell(row=row_number, col=wachtlijst_col, value="toegevoegd")
                 
             print(f"Rij {row_number} ({voornaam} {achternaam}) toegevoegd aan de wachtlijst ({leeftijdscategorie}) op plek {wachtlijst_plek}.")
 
         # --- Mail Logica ---
-        # Probeer mail toe te wijzen en te versturen
+        # Probeer mail toe te wijzen en te versturen (heeft nu de geüpdatete wachtlijst_plaats bij de hand)
         mail_is_verstuurd = assignment.assign_and_send(emailer, rij)
         
         if mail_is_verstuurd and mail_verstuurd_col:
             print(f"Mail succesvol verstuurd voor rij {row_number}. Update spreadsheet...")
-            # Update de "mail_verstuurd" kolom in de sheet naar "ja"
-            updater.update_cell(row=row_number, col=mail_verstuurd_col, value="ja")
+            # Update de "mail1_verstuurd" kolom in de sheet naar "Ja"
+            updater.update_cell(row=row_number, col=mail_verstuurd_col, value="Ja")
         else:
             print(f"Rij {row_number} overgeslagen of mail is al verstuurd.")
 

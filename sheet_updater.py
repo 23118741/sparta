@@ -37,7 +37,8 @@ class SheetUpdater:
             return
         vals = self.config.wachtlijst_sheet.get_all_values()
         if not vals:
-            headers = ["voornaam", "achternaam", "leeftijdscategorie", "geboortedatum", "wachtlijst_plek"]
+            # GECORRIGEERD: "email" toegevoegd zodat dit matcht met 'wachtlijst_rij'
+            headers = ["voornaam", "achternaam", "email", "leeftijdscategorie", "geboortedatum", "wachtlijst_plek"]
             self.config.wachtlijst_sheet.append_row(headers)
             print("Wachtlijst headers aangemaakt.")
 

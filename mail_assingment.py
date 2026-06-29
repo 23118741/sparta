@@ -19,42 +19,24 @@ class MailAssignment:
         if not ontvanger:
             print("Geen e-mailadres gevonden in deze rij.")
             return False
-
-        # Logica voor "TE JONG"
+        
+        # --- Check op Te Jong / Te Oud (Ongeacht locatie) ---
         if categorie == "TE JONG":
-            emailer.send_to_young_email(ontvanger)
+            emailer.send_too_young_email(row)
+            return True
+        elif categorie == "TE OUD":
+            emailer.send_too_old_email(row)
             return True
 
-        # Logica voor "TE OUD"
-        if categorie == "TE OUD":
-            emailer.send_to_old_email(ontvanger)
+        if "ZUIDERPARK" in locatie:
+            emailer.send_zp_email(row)
             return True
-
-        # Logica voor U16 (U8 t/m U16)
-        u16_groepen = ["U8", "U10", "U11", "U12", "U14", "U16"]
-        if categorie in u16_groepen:
-            if "ZUIDERPARK" in locatie:
-                emailer.send_u16_zp_email(row)
-                return True
-            elif "WESTVLIET" in locatie:
-                emailer.send_u16_wv_email(ontvanger)
-                return True
-            else:
-                print(f"Onbekende locatie '{locatie}' voor categorie {categorie}")
-                return False
-
-        # Logica voor U20 (U18 en U20)
-        u20_groepen = ["U18", "U20"]
-        if categorie in u20_groepen:
-            if "ZUIDERPARK" in locatie:
-                emailer.send_u20_zp_email(row)
-                return True
-            elif "WESTVLIET" in locatie:
-                emailer.send_u20_wv_email(ontvanger)
-                return True
-            else:
-                print(f"Onbekende locatie '{locatie}' voor categorie {categorie}")
-                return False
+        elif "WESTVLIET" in locatie:
+            emailer.send_wv_email(row)
+            return True
+        else:
+            print(f"Onbekende locatie '{locatie}' voor categorie {categorie}")
+            return False
 
         print(f"Geen match gevonden voor categorie '{categorie}'")
         return False
